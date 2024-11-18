@@ -11,8 +11,7 @@
 # Classes
 # For this assignment, you will be creating two classes:
 # One for Pizza
-# One for a Pizzeria
-
+# One f
 
 # You will be creating a Pizza class. It should have the following attributes:
 # - Size
@@ -35,6 +34,26 @@
 # - Assign the parameter for sauce to the attribute.
 # - Create the toppings attribute, starting off as a list only holding cheese.
 
+class Pizza:
+    def __init__(self, size, sauce='red'):
+        self.size = self.set_size(size)
+        self.sauce = sauce
+        self.toppings = ['cheese']
+    def set_size(self, size):
+        if size > 10:
+            return size
+        else:
+            return 10  
+    def get_size(self):
+        return self.size
+    def get_sauce(self):
+        return self.sauce
+    def add_toppings(self, *toppings):
+        self.toppings.extend(toppings)
+    def get_toppings(self):
+        return self.toppings
+    def count_toppings(self):
+        return len(self.toppings)
 
 # You will be creating a Pizzeria class with the following attributes:
 # - orders, the number of orders placed. Should start at 0.
@@ -70,6 +89,51 @@
 # - getNumberOfOrders()
 #   - This will simply return the number of orders.
 
+class Pizzeria:
+    price_per_topping = 0.30
+    price_per_inch = 0.60
+    def __init__(self):
+        self.orders = 0
+        self.pizzas = []
+    def place_order(self):
+        self.orders += 1
+        size = int(input("Enter the size of the pizza (in inches): "))
+        sauce = input("Enter the sauce (default is 'red' if left blank): ")
+        if not sauce:
+            sauce = 'red'
+        toppings = []
+        while True:
+            topping = input("Enter a topping (or press Enter to finish): ")
+            if topping == "":
+                break
+            toppings.append(topping)
+        pizza = Pizza(size, sauce)
+        pizza.add_toppings(*toppings)
+        self.pizzas.append(pizza)
+    def get_price(self):
+        if not self.pizzas:
+            return 0
+        pizza = self.pizzas[-1]  
+        return (pizza.get_size() * self.price_per_inch) + (pizza.count_toppings() * self.price_per_topping)
+    def get_receipt(self):
+        if not self.pizzas:
+            return "No orders placed."
+        pizza = self.pizzas[-1]
+        size_price = pizza.get_size() * self.price_per_inch
+        toppings_price = pizza.count_toppings() * self.price_per_topping
+        total_price = self.get_price()
+        receipt = (
+            f"Receipt:\n"
+            f"Size: {pizza.get_size()} inches\n"
+            f"Sauce: {pizza.get_sauce()}\n"
+            f"Toppings: {', '.join(pizza.get_toppings())}\n"
+            f"Price for size: ${size_price:.2f}\n"
+            f"Price for toppings: ${toppings_price:.2f}\n"
+            f"Total price: ${total_price:.2f}"
+        )
+        return receipt
+    def get_number_of_orders(self):
+        return self.orders
 
 # - Declare your pizzeria object.
 # - Enter a while loop to ask if the user wants to order a pizza.
@@ -79,6 +143,15 @@
 # - Repeat the loop as needed.
 # - AFTER the loop, print how many orders were placed.
 
+
+pizzeria = Pizzeria()
+while True:
+    user_input = input("Would you like to order a pizza? (type 'exit' to quit): ").strip().lower()
+    if user_input == 'exit':
+        break  
+    pizzeria.place_order()
+    print(pizzeria.get_receipt())
+print(f"Total orders placed: {pizzeria.get_number_of_orders()}")
 
 # Example output:
 """
